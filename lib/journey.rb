@@ -4,7 +4,7 @@ class Journey
   MIN_FARE = 1
   FINE = 6
 
-attr_reader :current_journey
+attr_reader :current_journey, :all_journeys
 
   def initialize
     @current_journey = []

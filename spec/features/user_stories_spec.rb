@@ -46,6 +46,7 @@ describe "User Stories" do
     # As a customer
     # I need my fare deducted from my card
     it 'fare is deducted from card balance' do
+      card.touch_in(station)
       expect{ card.touch_out(station) }.to change{ card.balance }.by fare
     end
 
@@ -65,6 +66,7 @@ describe "User Stories" do
     # As a customer
     # When my journey is complete, I need the correct amount deducted from my card
     it 'charges customers appropriate fare when they touch out' do
+      card.touch_in(station)
       expect{ card.touch_out(station) }.to change{ card.balance }.by fare
     end
     # In order to pay for my journey
@@ -72,7 +74,7 @@ describe "User Stories" do
     # I need to know where I've travelled from
     it 'card needs to log entry station to current_trip upon touch_in' do
       card.touch_in(station)
-      expect(card.current_trip).to eq [station]
+      expect(card.journeys.current_journey).to eq [station]
     end
 
     it 'card needs to reset current_trip on touch_out' do
@@ -86,7 +88,7 @@ describe "User Stories" do
     it 'card stores current trip' do
       card.touch_in(station)
       card.touch_out(station)
-      expect(card.trips[card.trips.length]).to eq [station, station]
+      expect(card.journeys.all_journeys[card.journeys.all_journeys.length]).to eq [station, station]
     end
   end
 

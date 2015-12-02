@@ -37,11 +37,12 @@ describe Oystercard do
         expect{ card.touch_out(station) }.to change{ card.in_journey? }.to eq false
       end
       it 'subtracts FARE from balance' do
+        card.touch_in(station)
         expect{ card.touch_out(station) }.to change{ card.balance }.by fare
       end
       it 'current_trip resets upon touch_out' do
         card.touch_in(station)
-        expect{ card.touch_out(station) }.to change{ card.current_trip }.to eq []
+        expect{ card.touch_out(station) }.to change{ card.journeys.current_journey }.to eq []
       end
     end
 
@@ -51,7 +52,7 @@ describe Oystercard do
       end
       it 'should record station on touch_in' do
         card.touch_in(station)
-        expect(card.current_trip).to eq [station]
+        expect(card.journeys.current_journey).to eq [station]
       end
     end
 
@@ -61,10 +62,10 @@ describe Oystercard do
         card.touch_out(station)
       end
       it 'current_trip is cleared upon touch_out' do
-        expect(card.current_trip).to eq []
+        expect(card.journeys.current_journey).to eq []
       end
       it 'logs current_trip after touch_in and touch_out' do
-        expect(card.trips.length).to eq 1
+        expect(card.journeys.all_journeys.length).to eq 1
       end
     end
 
