@@ -1,13 +1,14 @@
+require './lib/journey.rb'
+
 class Oystercard
   MAX_LIMIT = 90
   FARE = 1
 
-  attr_reader :balance, :current_trip, :trips
+  attr_reader :balance, :journeys
 
   def initialize
     @balance = 0
-    @current_trip = []
-    @trips = {}
+    @journeys = Journey.new
   end
 
   def top_up(amount)
@@ -17,36 +18,35 @@ class Oystercard
 
   def touch_in(entry_station)
     raise "Sorry mate- you need a top up!" if out_of_cash?
-    current_trip << entry_station
+    pay_fine
+    self.journeys.start(entry_station)
   end
 
   def touch_out(exit_station)
-    current_trip << exit_station
-    save_trip
-    reset_trip
+    self.journeys.end(exit_station)
     charge_card
+    self.journeys.store_journey
+    @balance
   end
 
   def in_journey?
-    !current_trip.empty?
+    !self.journeys.current_journey.empty?
   end
 
   private
 
   def charge_card
-    @balance -= FARE
+    @balance -= self.journeys.charge
   end
 
-  def reset_trip
-    @current_trip = []
+  def pay_fine
+    unless self.journeys.current_journey.empty?
+      @balance -= self.journeys.charge
+    end
   end
 
   def maxed_out(amount)
     @balance + amount > MAX_LIMIT
-  end
-
-  def save_trip
-    @trips[@trips.length + 1] = @current_trip
   end
 
   def out_of_cash?
