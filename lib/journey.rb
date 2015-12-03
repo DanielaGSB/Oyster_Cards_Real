@@ -4,14 +4,14 @@ class Journey
   MIN_FARE = 1
   FINE = 6
 
-attr_reader :current_journey, :all_journeys
+attr_reader :current_journey
 
   def initialize
     @current_journey = []
-    @all_journeys = {}
+
   end
 
-  def start(station)
+  def entry_station(station)
     if @current_journey.empty?
       @current_journey << station
     else
@@ -20,7 +20,7 @@ attr_reader :current_journey, :all_journeys
     end
   end
 
-  def end(station)
+  def exit_station(station)
     if @current_journey.empty?
       incomplete_journey
     else
@@ -34,11 +34,6 @@ attr_reader :current_journey, :all_journeys
     else
       incomplete_journey
     end
-  end
-
-  def store_journey
-    @all_journeys[@all_journeys.length + 1] = @current_journey
-    @current_journey = []
   end
 
 private
